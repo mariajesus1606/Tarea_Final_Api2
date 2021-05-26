@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}EventosTicketMaster{% endblock %}
+{% block contenido %} 
+      <!-- Main Content -->
+      <div class="content-box">
+         <!-- Hero Section -->
+         <section class="section section-hero">
+            <div class="hero-box">
+               <div class="container">
+                  <div class="hero-text align-center">
+                     <h1>ENCUENTRA LOS EVENTOS DE TUS ARTISTAS FAVORITOS :)</h1>  
+                     <p>No te quedes sin tus entradas ;)</p>
+                  </div>
+
+                  <form class="destinations-form" method="post" action="/">
+                     <div class="input-line">
+                        <input type="text" name="artista" class="form-input check-value" placeholder="Busqueda por artista, evento o lugar" value="{{palabra_clave}}" />
+                        <select class="input-line" name="pais" id="pais">
+                           {% if paises %}
+                           <option value="{{Todos}}">Todos</option>
+                           {% for elem in paises -%}
+                           {% if elem == pais %}
+                           <option value= "{{elem}}" selected="selected">{{elem.upper()}}</option>
+                           {% else %}
+                           <option value= "{{elem}}">{{elem.upper()}}</option>
+                           {% endif %}
+                           {% endfor -%}
+                           {% endif %}
+                        </select>
+                        <button type="submit" name="destinations-form" class="form-submit btn btn-special" action="/">Buscar</button>
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </section>
+   {% if filtro %}
+         <!-- Destinations Section -->
+         <section class="section section-destination">
+          <!-- Title -->
+            <div class="section-title">
+               <div class="container">
+               {% if coincidencias > 0 %}
+                  <h2 class="title">LO TENEMOS!!</h2>
+                  <p class="sub-title">Se han encontrado {{coincidencias}} coincidencias.</p>
+               {% elif coincidencias == 1 %}
+                  <h2 class="title">¡Estás de suerte!</h2>
+                  <p class="sub-title">Se ha encontrado {{coincidencias}} coincidencia.</p>
+               {% else %}
+                  <!-- Title -->
+                    <div class="section-title">
+                       <div class="container">
+                          <h2 class="title">LO SIENTO</h2>
+                          <p class="title"><strong>NO HEMOS ENCONTRADO COINCIDENCIAS</strong></p>
+                       </div>
+                    </div>   
+               {% endif %}
+               </div>
+                  <!--Table-->
+                  <div class="limiter">
+                     <div class="container-table100">
+                        <div class="wrap-table100">
+                           <div class="table100 ver1 m-b-110">
+                              <div class="table100-head">
+                                 <table>
+                                    <thead>
+                                       <tr class="row100 head">
+                                          <th class="cell100 column1">Artista</th>
+                                          <th class="cell100 column2">Fecha</th>
+                                          <th class="cell100 column2">Hora</th>
+                                          <th class="cell100 column3">País</th>
+                                          <th class="cell100 column4">Ciudad</th>
+                                          <th class="cell100 column4">Entradas</th>
+
+                                       </tr>
+                                    </thead>
+                                 </table>
+                              </div>
+                           
+                              <div class="table100-body js-pscroll">
+                                 <table>
+                                    <tbody>
+                                    {% for elem in filtro -%}
+                                       {% if elem [0] and elem[1] %}
+                                       <tr class="row100 body">
+                                          <td class="cell100 column1"><u><a href="/evento/{{elem[9]}}">{{elem[0]}}</a></u></td>
+                                          <td class="cell100 column2">{{elem[5]}}</td>
+                                          <td class="cell100 column3">{{elem[6]}}</td>
+                                          <td class="cell100 column3">{{elem[1]}}</td>
+                                          <td class="cell100 column4">{{elem[2]}}</td>
+                                          <td class="cell100 column4"><u><a href="{{elem[7]}}">Ver entrada</a></u></td>
+                                       </tr>
+                                       {% endif %}
+                                    {% endfor -%}
+                                    </tbody>
+                                 </table>
+                                
+                              </div>
+                           </div>
+                         </div>
+                     </div>
+                     <a href="/"><u>Restablecer búsqueda</u></a>
+                  </div>
+            </div>
+         </div>
+      </section>
+   {% elif mensaje%}
+   <section class="section section-destination">
+      <!-- Title -->
+        <div class="section-title">
+           <div class="container">
+              <h2 class="title">LO SIENTO</h}}2>
+              <p class="title"><strong>{{mensaje}}</strong></p>
+           </div>
+        </div>   
+   </section>
+   {% endif %}
+{% endblock %}
