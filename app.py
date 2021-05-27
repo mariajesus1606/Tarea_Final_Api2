@@ -191,4 +191,8 @@ def detallevento(identificador):
 
  
 #Probar en el entorno de desarrollo
-app.run(debug=True)
+#app.run(debug=True)
+
+#Entorno de producción en Heroku
+port=os.environ["PORT"]
+app.run('0.0.0.0', int(port), debug=False)
