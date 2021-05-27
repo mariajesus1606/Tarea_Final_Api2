@@ -124,6 +124,70 @@ def eventos():
     else:
         abort(404)
 
+#Ruta de detalle del evento
+@app.route('/evento/<identificador>',methods=["GET","POST"])
+def detallevento(identificador):
+    #En una variable key, guardamos por el diccionario os.environ nuestra key
+    key=os.environ["apikey"]
+    #Creamos el diccionario con los parámetros necesarios
+    payload = {'apikey':key,'id':identificador}
+    #Guardamos la petición en una variable(urlbase + diccionario con parametros)
+    r=requests.get(url_base+'events',params=payload)
+
+	#Comprobamos que la petición genera un 200
+    if r.status_code == 200:
+        #Guardamos el contenido de la petición1 
+        contenido = r.json()
+        nombres=[]
+        fechas=[]
+        horas=[]
+        salas=[]
+        direccion=[]
+        ciudades=[]
+        paises=[]
+        urls=[]
+        urls_sala=[]
+        fechas_cambiadas=[]
+        fecha_str=[]
+
+        #Guardar contenido en listas
+        for elem in contenido["_embedded"]["events"]:
+            #Nombres
+            nombres.append(elem["name"])
+            #Ciudades
+            ciudades.append(elem["_embedded"]["venues"][0]["city"]["name"])
+            #Paises
+            paises.append(elem["_embedded"]["venues"][0]["country"]["name"])
+            #Salas
+            if "name" in elem["_embedded"]["venues"][0]:
+                salas.append(elem["_embedded"]["venues"][0]["name"])
+            else:
+                salas.append("-")
+            #Direcciones
+            if "address" in elem["_embedded"]["venues"][0]:
+                direccion.append(elem["_embedded"]["venues"][0]["address"]["line1"])
+            else:
+                direccion.append("-")
+            #Fechas con cambio de formato
+            fechas.append(elem["dates"]["start"]["localDate"])
+            for fecha in fechas:
+                fechas_cambiadas.append(datetime.strptime(fecha, '%Y-%m-%d'))
+            for fecha in fechas_cambiadas:
+                fecha_str.append(datetime.strftime(fecha, '%d/%m/%Y'))
+            #Horas, comprobamos que esta la hora porque a veces la hora no aparece
+            if "localTime" in elem["dates"]["start"]:
+                horas.append(elem["dates"]["start"]["localTime"])
+            else:
+                horas.append("-")
+            #URLS
+            urls.append(elem["url"])
+            if "url" in elem["_embedded"]["venues"][0]:
+                urls_sala.append(elem["_embedded"]["venues"][0]["url"])
+            else:
+                urls_sala.append("-")
+
+        filtro=zip(nombres,paises,ciudades,salas,direccion,fecha_str,horas,urls,urls_sala)
+        return render_template("detalle_eventos.html",filtro=filtro)
 
  
 #Probar en el entorno de desarrollo
